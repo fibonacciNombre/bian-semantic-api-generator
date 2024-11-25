@@ -1,0 +1,1 @@
+# bian-semantic-api-generator
