@@ -18,6 +18,7 @@ const App = () => {
   const [actionTerm, setActionTerm] = useState("");
   const [behaviorQualifier, setBehaviorQualifier] = useState("");
   const [generatedData, setGeneratedData] = useState({});
+  const [code4Project, setCode4Project] = useState("");
 
   const serviceDomainValue =
     selectedDomain && selectedCapabilityLevel1
@@ -46,6 +47,10 @@ const App = () => {
       .join("")}`;
     const objectResponse = `${objectRequest}Response`;
     const behaviorQua = `${behaviorQualifier?.toLowerCase().replace(/\s/g, "-")}`;
+    const repositoryValue = 
+      apiType && code4Project && serviceDomainValue && behaviorQua
+        ? `${apiType.toLowerCase().replace(/\s/g, "-")}-${code4Project.toLowerCase().replace(/\s/g, "-")}-${serviceDomainValue.toLowerCase().replace(/\s/g, "-")}-${behaviorQua.toLowerCase().replace(/\s/g, "-")}`
+        : "";
 
     setGeneratedData({
       "API Type": apiType,
@@ -60,6 +65,7 @@ const App = () => {
       "API URI Niubiz": apiURI,
       "Object Request": objectRequest,
       "Object Response": objectResponse,
+      "Repository Bitbucket": repositoryValue,
     });
 
     console.log("Generated Data:", {
@@ -75,6 +81,7 @@ const App = () => {
       "API URI Niubiz": apiURI,
       "Object Request": objectRequest,
       "Object Response": objectResponse,
+      "Repository Bitbucket": repositoryValue,
     });
   };
 
@@ -293,6 +300,20 @@ const App = () => {
           onChange={(e) => setBehaviorQualifier(e.target.value)}
           className="form-control"
         />
+      </div>
+      <div className="form-group">
+        <label>Code 4 Project:</label>
+        <select
+          value={code4Project}
+          onChange={(e) => setCode4Project(e.target.value)}
+          className="form-control"
+        >
+          <option value="">Select Code 4 Project</option>
+          <option value="loyt">Loyalty</option>
+          <option value="ryss">Recargas y Servicios</option>
+          <option value="ecom">Comercio Electrónico</option>
+          <option value="mace">Marca Cerrada</option>
+        </select>
       </div>
       <button onClick={handleGenerateAPI} className="generate-button">
         Generate Semantic PBC and API
