@@ -103,6 +103,8 @@ const App = () => {
   tags:
     - name: ${generatedData["Behavior Qualifier"]}
       description: behavior ${generatedData["Behavior Qualifier"]}
+  servers:
+    - url: 'https://api.${code4Project}.niubiz.com.pe' 
   paths:
     ${generatedData["API URI Niubiz"]}:
       ${method.toLowerCase()}:
