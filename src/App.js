@@ -2,125 +2,16 @@ import logo from './logo.svg';
 
 import React, { useState } from "react";
 import "./App.css";
+import businessData from "./data/businessData"; 
 
 const App = () => {
-  const [data] = useState({
-    "dominio": "Procesamiento",
-    "business-areas": [
-      {
-        "business-area":"Valor agregado",
-        "codigo-ba":"VAS",
-        "business-domains": [
-          {
-            "business-domain":"Loyalty",
-            "codigo-bd":"LOY",
-            "service-domains": [
-              {
-                "service-domain":"redemption",
-                "codigo-sd":"red"
-
-              },
-              {
-                "service-domain":"validate",
-                "codigo-sd":"val"
-
-              }
-            ]
-          },
-          {
-            "business-domain":"Marca Cerrada",
-            "codigo-bd":"MACE",
-            "service-domains": [
-              {
-                "service-domain":"redemption",
-                "codigo-sd":"red"
-
-              },
-              {
-                "service-domain":"validate",
-                "codigo-sd":"val"
-
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "business-area":"Venta No Presente",
-        "codigo-ba":"VNP",
-        "business-domains": [
-          {
-            "business-domain":"Visa Direct",
-            "codigo-bd":"VDR",
-            "service-domains": [
-              {
-                "service-domain":"authorize",
-                "codigo-sd":"AUT"
-
-              },
-              {
-                "service-domain":"validate",
-                "codigo-sd":"VAL"
-
-              }
-            ]
-          },
-          {
-            "business-domain":"Geminis",
-            "codigo-bd":"GEM",
-            "service-domains": [
-              {
-                "service-domain":"transaccion",
-                "codigo-sd":"TRX"
-
-              },
-              {
-                "service-domain":"monitoring",
-                "codigo-sd":"MON"
-
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "business-area":"Instant Payments",
-        "codigo-ba":"INP",
-        "business-domains": []
-      },
-      {
-        "business-area":"Transversales",
-        "codigo-ba":"TRV",
-        "business-domains": []
-      },
-      {
-        "business-area":"Soluciones Multiagente",
-        "codigo-ba":"SML",
-        "business-domains": [
-          {
-            "business-domain":"Flow Management",
-            "codigo-bd":"FLW",
-            "service-domains": [
-              {
-                "service-domain":"redemption",
-                "codigo-sd":"red"
-
-              },
-              {
-                "service-domain":"monitoring",
-                "codigo-sd":"MON"
-
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  });
+  const [data] = useState(businessData);
 
   const [selectedBusinessArea, setSelectedBusinessArea] = useState("");
   const [selectedDomain, setSelectedDomain] = useState("");
   const [selectedService, setSelectedService] = useState("");
+  const [selectedMacroCapability, setSelectedMacroCapability] = useState("");
+  const [selectedCapabilityLevel1, setSelectedCapabilityLevel1] = useState("");
   const [apiType, setApiType] = useState("");
   const [apiVersion, setApiVersion] = useState("");
   const [method, setMethod] = useState("GET");
@@ -128,15 +19,25 @@ const App = () => {
   const [behaviorQualifier, setBehaviorQualifier] = useState("");
   const [generatedData, setGeneratedData] = useState({});
 
+  const serviceDomainValue =
+    selectedDomain && selectedCapabilityLevel1
+      ? `${selectedCapabilityLevel1.toLowerCase().replace(/\s+/g, "-")}-${selectedDomain.toLowerCase().replace(/\s+/g, "-")}`
+      : "";
+
+  const pbcValue =
+    selectedCapabilityLevel1 && selectedBusinessArea && selectedDomain
+      ? `${selectedCapabilityLevel1.toLowerCase().replace(/\s+/g, "-")}-${selectedBusinessArea.toLowerCase().replace(/\s+/g, "-")}-${selectedDomain.toLowerCase().replace(/\s+/g, "-")}`
+      : "";
+
   const actionTermsByMethod = {
     GET: ["retrieve", "notify"],
-    POST: ["create", "initiate", "register", "evaluate", "provide"],
+    POST: ["create", "initiate", "register", "evaluate", "provide", "redemption"],
   };
 
   const availableActionTerms = actionTermsByMethod[method] || [];
 
   const handleGenerateAPI = () => {
-    const apiBasePath = `/${selectedService?.toLowerCase().replace(/\s/g, "-")}/v${apiVersion}`;
+    const apiBasePath = `/${serviceDomainValue?.toLowerCase().replace(/\s/g, "-")}/v${apiVersion}`;
     const apiPathOperation = `/${behaviorQualifier?.toLowerCase().replace(/\s/g, "-")}/${actionTerm?.toLowerCase()}`;
     const apiURI = `${apiBasePath}${apiPathOperation}`;
     const objectRequest = `${actionTerm?.charAt(0).toUpperCase() + actionTerm?.slice(1)}${behaviorQualifier
@@ -144,31 +45,41 @@ const App = () => {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join("")}`;
     const objectResponse = `${objectRequest}Response`;
+    const behaviorQua = `${behaviorQualifier?.toLowerCase().replace(/\s/g, "-")}`;
 
     setGeneratedData({
       "API Type": apiType,
-      "API Product Name": selectedDomain,
-      "API Name": selectedService,
+      "Business Area": selectedDomain,
+      "API Name": serviceDomainValue,
+      "Macro Capability": selectedMacroCapability,
+      "Capability Level 1": selectedCapabilityLevel1,
+      "PBC": pbcValue,
       "API Base Path": apiBasePath,
+      "Behavior Qualifier": behaviorQua,
       "API Path Operation": apiPathOperation,
-      "API URI BIAN": apiURI,
+      "API URI Niubiz": apiURI,
       "Object Request": objectRequest,
       "Object Response": objectResponse,
     });
 
     console.log("Generated Data:", {
       "API Type": apiType,
-      "API Product Name": selectedDomain,
-      "API Name": selectedService,
+      "Business Area": selectedDomain,
+      "API Name": serviceDomainValue,
+      "Macro Capability": selectedMacroCapability,
+      "Capability Level 1": selectedCapabilityLevel1,
+      "PBC": pbcValue, 
       "API Base Path": apiBasePath,
+      "Behavior Qualifier": behaviorQua,
       "API Path Operation": apiPathOperation,
-      "API URI BIAN": apiURI,
+      "API URI Niubiz": apiURI,
       "Object Request": objectRequest,
       "Object Response": objectResponse,
     });
   };
 
   const handleDownloadYAML = () => {
+    console.log(generatedData)
     if (!Object.keys(generatedData).length) {
       alert("Por favor, genera la API primero antes de descargar el YAML.");
       return;
@@ -178,11 +89,18 @@ const App = () => {
   openapi: 3.0.1
   info:
     title: ${generatedData["API Name"]}
-    description: Semantic API Specification for ${generatedData["API Name"]}
-    version: ${apiVersion}
+    description: |
+      # PBC: ${generatedData["PBC"]} #
+      Semantic API Specification for ${generatedData["API Name"]}
+    version: '${apiVersion}'
+  tags:
+    - name: ${generatedData["Behavior Qualifier"]}
+      description: behavior ${generatedData["Behavior Qualifier"]}
   paths:
-    ${generatedData["API Path Operation"]}:
+    ${generatedData["API URI Niubiz"]}:
       ${method.toLowerCase()}:
+        tags:
+          - ${generatedData["Behavior Qualifier"]}
         summary: ${actionTerm} ${behaviorQualifier}
         responses:
           '200':
@@ -222,9 +140,11 @@ const App = () => {
 
   return (
     <div className="container">
-      <h1 className="title">Semantic API (BIAN v12) - Generator</h1>
+      <h1 className="title">Semantic PBCs - APIs - Generator</h1>
+      <div className="layout">
+      <div className="form-container">
       <div className="form-group">
-        <label>BIAN Business Area:</label>
+        <label>Business Area:</label>
         <select
           value={selectedBusinessArea}
           onChange={(e) => {
@@ -243,7 +163,7 @@ const App = () => {
         </select>
       </div>
       <div className="form-group">
-        <label>BIAN Business Domain:</label>
+        <label>Business Domain:</label>
         <select
           value={selectedDomain}
           onChange={(e) => {
@@ -264,24 +184,49 @@ const App = () => {
         </select>
       </div>
       <div className="form-group">
-        <label>BIAN Service Domain:</label>
+        <label>Macro Capability:</label>
         <select
-          value={selectedService}
-          onChange={(e) => setSelectedService(e.target.value)}
-          disabled={!selectedDomain}
+          value={selectedMacroCapability}
+          onChange={(e) => {
+            setSelectedMacroCapability(e.target.value);
+            setSelectedCapabilityLevel1("");
+          }}
           className="form-control"
         >
-          <option value="">Select Service Domain</option>
-          {data["business-areas"]
-            .find((area) => area["business-area"] === selectedBusinessArea)
-            ?.["business-domains"]
-            .find((domain) => domain["business-domain"] === selectedDomain)
-            ?.["service-domains"].map((service) => (
-              <option key={service["codigo-sd"]} value={service["service-domain"]}>
-                {service["service-domain"]}
+          <option value="">Select Macro Capability</option>
+          {data["macro-capabilitys"].map((macro) => (
+            <option key={macro["code-mc"]} value={macro["macro-capability"]}>
+              {macro["macro-capability"]}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="form-group">
+        <label>Capability Level 1:</label>
+        <select
+          value={selectedCapabilityLevel1}
+          onChange={(e) => setSelectedCapabilityLevel1(e.target.value)}
+          disabled={!selectedMacroCapability}
+          className="form-control"
+        >
+          <option value="">Select Capability Level 1</option>
+          {data["macro-capabilitys"]
+            .find((macro) => macro["macro-capability"] === selectedMacroCapability)
+            ?.["capabilities-level-1"].map((capability) => (
+              <option key={capability["codigo-cl1"]} value={capability["capability-level-1"]}>
+                {capability["capability-level-1"]}
               </option>
             ))}
         </select>
+      </div>
+      <div className="form-group">
+        <label>Service Domain:</label>
+        <input
+          type="text"
+          value={serviceDomainValue}
+          disabled
+          className="form-control"
+        />
       </div>
       <div className="form-group">
         <label>API Type:</label>
@@ -350,25 +295,30 @@ const App = () => {
         />
       </div>
       <button onClick={handleGenerateAPI} className="generate-button">
-        Generate BIAN Semantic API
+        Generate Semantic PBC and API
       </button>
       <button onClick={handleDownloadYAML} className="download-button">
           Descargar API Swagger YAML
         </button>
+      </div>
 
+      {/* Columna derecha: Datos generados */}
       {Object.keys(generatedData).length > 0 && (
-        <div className="generated-data">
+        <div className="generated-data-container">
           <h2>BIAN Semantic API Generate</h2>
           <ul>
             {Object.entries(generatedData).map(([key, value]) => (
               <li key={key}>
-                <strong>{key}:</strong> {value}
+                
+                <strong>{key}:</strong> <br/>{value}
               </li>
+              
             ))}
           </ul>
         </div>
       )}
 
+    </div>
     </div>
   );
 };

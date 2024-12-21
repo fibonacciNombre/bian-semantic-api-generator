@@ -62,17 +62,21 @@ body {
 
 .form-group {
   margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .form-group label {
-  display: block;
+  flex: 1;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin: 0; /* Asegura que no haya margen adicional */
   color: #555555;
+  text-align: right; /* Alinea el texto de las etiquetas a la derecha */
 }
 
 .form-control {
-  width: 100%;
+  flex: 2;
   padding: 10px;
   font-size: 16px;
   border: 1px solid #cccccc;
@@ -115,4 +119,51 @@ body {
 
 .download-button:hover {
   background-color: #218838;
+}
+
+.generate-button,
+.download-button {
+  margin-top: 20px;
+  width: auto; /* Ajusta el ancho para que no ocupe el 100% */
+}
+
+/* Estilo para dividir en dos columnas */
+.layout {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.form-container {
+  flex: 2;
+}
+
+.generated-data-container {
+  flex: 1;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.generated-data-container h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #333333;
+}
+
+.generated-data-container ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.generated-data-container ul li {
+  margin-bottom: 10px;
+}
+
+.generated-data-container ul li strong {
+  font-weight: bold;
+  color: #555555;
 }
