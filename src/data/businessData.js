@@ -73,10 +73,10 @@ const businessData = {
         ],
         },
         {
-        "macro-capability": "compensation-settlement",
+        "macro-capability": "clearing-settlement",
         "code-mc": "cs",
         "capabilities-level-1": [
-            { "capability-level-1": "compensation", "codigo-cl1": "co" },
+            { "capability-level-1": "clearing", "codigo-cl1": "co" },
             { "capability-level-1": "settlement", "codigo-cl1": "se" },
         ],
         },
