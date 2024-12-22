@@ -328,7 +328,7 @@ const App = () => {
       {/* Columna derecha: Datos generados */}
       {Object.keys(generatedData).length > 0 && (
         <div className="generated-data-container">
-          <h2>BIAN Semantic API Generate</h2>
+          <h2>Semantic PBC-API Generate</h2>
           <ul>
             {Object.entries(generatedData).map(([key, value]) => (
               <li key={key}>
